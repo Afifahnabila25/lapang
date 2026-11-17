@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lapang — Doa sesuai mood</title>
+<meta name="description" content="__DESC__">
+<meta name="theme-color" content="#F4F2FB">
+
+<!-- preview link (WhatsApp, Telegram, X, dll) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lapang">
+<meta property="og:title" content="Lapang — doa sesuai mood kamu">
+<meta property="og:description" content="__DESC__">
+<meta property="og:url" content="__SITE_URL__">
+<meta property="og:image" content="__SITE_URL__og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Lapang: kartu-kartu mood seperti r u tired? dan lagi bokek, help">
+<meta property="og:locale" content="id_ID">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lapang">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+<style>
+/*__FONTS__*/
+:root{
+  --bg:#F4F2FB; --ink:#17142A; --muted:#625C76; --line:#17142A; --white:#FFFFFF;
+  /* warna kartu dibuat lebih lembut biar nggak rame */
+  --pink:#FFC2DD; --lime:#DDF58A; --sky:#BEE2FF; --yellow:#FFEFA3; --peach:#FFD3AE; --lilac:#DAD2FF;
+  --accent:#C6F432;
+  --b:2px solid var(--line);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:"DM Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
+:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.app{max-width:460px;margin:0 auto;min-height:100vh;padding:20px 20px 120px;display:flex;flex-direction:column;gap:28px}
+.px{font-family:"Pixel",monospace;font-size:8px;letter-spacing:.4px;line-height:1.6}
+.hd{font-family:"Bricolage",sans-serif;font-weight:800}
+.press{transition:transform .12s, box-shadow .12s}
+.press:active{transform:translate(2px,2px)!important;box-shadow:0 0 0 var(--ink)!important}
+@media (hover:hover){ .lift:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)} }
+
+/* ---------- top ---------- */
+.top{display:flex;justify-content:space-between;align-items:center;min-height:44px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:36px;height:36px;border-radius:11px;background:var(--accent);border:var(--b);display:grid;place-items:center;font-size:18px}
+.brand .hd{font-size:20px;letter-spacing:-.3px}
+
+/* ---------- quote (paling atas) ---------- */
+.quote{background:var(--ink);color:var(--bg);border-radius:24px;padding:22px 20px 20px;box-shadow:3px 3px 0 var(--accent)}
+.quote .px{color:var(--accent)}
+.quote p{margin:14px 0 0;font-family:"Bricolage",sans-serif;font-weight:600;font-size:21px;line-height:1.32;letter-spacing:-.3px}
+.quote .by{margin-top:14px;font-size:13px;font-weight:700;color:#FFE45C}
+
+/* ---------- section head + chips ---------- */
+.sec h1{margin:0;font-size:28px;line-height:1.05;letter-spacing:-.6px}
+.sec p{margin:6px 0 0;font-size:14.5px;color:var(--muted)}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:14px -20px 0;padding:2px 20px 2px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;background:transparent;border:var(--b);border-radius:999px;padding:7px 14px;font-weight:700;font-size:13px}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+/* ---------- kartu mood ---------- */
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:-12px}
+.card{position:relative;border:var(--b);border-radius:20px;box-shadow:3px 3px 0 var(--ink);padding:16px 14px 14px;display:flex;flex-direction:column;justify-content:space-between;gap:18px;min-height:142px;transition:transform .12s, box-shadow .12s}
+.card .mood{font-size:21px;line-height:1.08;letter-spacing:-.4px}
+.card .meta{font-size:12.5px;font-weight:500;line-height:1.35;color:rgba(23,20,42,.72)}
+.card .mk{position:absolute;top:12px;right:12px}
+.card.span2{grid-column:span 2;min-height:118px}
+.empty{grid-column:span 2;text-align:center;padding:30px 16px;border:2px dashed var(--ink);border-radius:20px;color:var(--muted);line-height:1.5}
+
+/* ---------- link dzikir ---------- */
+.quest{display:flex;align-items:center;gap:14px;border:2px dashed var(--ink);border-radius:20px;padding:16px}
+.quest .hd{font-size:17px}
+.quest small{display:block;font-size:12.5px;margin-top:2px;color:var(--muted)}
+footer{font-size:12px;line-height:1.6;color:var(--muted)}
+
+/* ---------- nav ---------- */
+.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;width:calc(min(460px,100vw) - 40px);background:var(--ink);border-radius:20px;padding:6px;display:flex;z-index:5}
+.nav a{flex:1;text-align:center;color:var(--bg);padding:12px 0;font-weight:700;font-size:13.5px;border-radius:15px}
+.nav a[aria-current="page"]{background:var(--accent);color:var(--ink)}
+
+/* ---------- halaman doa ---------- */
+.ibtn{width:44px;height:44px;border-radius:13px;background:var(--white);border:var(--b);display:grid;place-items:center}
+.ibtn[aria-pressed="true"]{background:#FFE45C}
+.ibtn[aria-pressed="true"] path{fill:var(--ink)}
+.hero{border:var(--b);border-radius:24px;box-shadow:3px 3px 0 var(--ink);padding:20px 18px}
+.hero .hd{font-size:38px;line-height:1;letter-spacing:-1.2px;margin-top:10px}
+.hero p{margin:12px 0 0;font-size:15px;line-height:1.55}
+.doa{background:var(--white);border:var(--b);border-radius:24px;box-shadow:3px 3px 0 var(--ink);overflow:hidden}
+.doa .head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;border-bottom:var(--b)}
+.doa .head .hd{font-size:17px}
+.doa .ref{flex:none;font-size:12px;font-weight:700;border-radius:999px;padding:4px 10px;border:1.5px solid var(--ink)}
+.ar{font-family:"Amiri Quran",serif;direction:rtl}
+.doa .ar{margin:0;padding:26px 18px 14px;font-size:30px;line-height:2.2;text-align:center}
+.doa .lat{margin:0;padding:0 18px 12px;font-size:15.5px;line-height:1.6;text-align:center;font-weight:500;color:#6B3FA0}
+.doa .tr{margin:0;padding:0 18px 22px;font-size:16px;line-height:1.65;text-align:center}
+.full{display:none;border-top:2px dashed var(--ink);padding:16px 18px;background:#FAF9FF}
+.full.open{display:block}
+.full .ar{font-size:23px;line-height:2.1;text-align:right;margin:8px 0}
+.full .lat{font-size:14px;line-height:1.6;margin:0 0 8px;padding:0;color:#6B3FA0;font-weight:500;text-align:left}
+.full .tr{font-size:14px;color:var(--muted);line-height:1.6;margin:0;padding:0;text-align:left}
+.doa .acts{display:flex;border-top:var(--b)}
+.doa .acts button{flex:1;padding:14px 0;font-weight:700;font-size:14px}
+.doa .acts button+button{border-left:var(--b)}
+.lore{display:flex;gap:12px;align-items:flex-start;background:#FFFDF0;border:2px dashed var(--ink);border-radius:20px;padding:14px 16px}
+.lore .px{flex:none;background:#FFE45C;border:1.5px solid var(--ink);border-radius:6px;padding:5px 7px}
+.lore p{margin:0;font-size:14.5px;line-height:1.6;color:var(--ink)}
+.pager{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.pager a{border:var(--b);border-radius:18px;padding:12px 14px;background:var(--white)}
+.pager a.next{text-align:right}
+.pager .px{font-size:7px;color:var(--muted)}
+.pager b{display:block;font-size:14px;margin-top:6px;line-height:1.25}
+
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(12px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:700;opacity:0;transition:.2s;pointer-events:none;z-index:30}
+.toast.show{opacity:1;transform:translateX(-50%)}
+</style>
+</head>
+<body>
+<main class="app" id="app"></main>
+<nav class="nav" id="nav" aria-label="Menu utama">
+  <a href="#" data-tab="home">Mood</a>
+  <a href="#tersimpan" data-tab="tersimpan">Tersimpan</a>
+</nav>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const DATA = /*__DATA__*/[];
+const COLORS = ["var(--pink)","var(--lime)","var(--sky)","var(--yellow)","var(--peach)","var(--lilac)"];
+DATA.forEach((d,i) => { d.n = i + 1; d.color = COLORS[i % COLORS.length]; });
+const FILTERS = [["semua","semua"],["capek","capek"],["skripsi","skripsi"],["rezeki","rezeki"]];
+const QUOTE = "Saya tidak minta yang kecil-kecil, saya selalu minta yang besar-besar. Saya takut minta yang kecil, mengerdilkan Allah Yang Maha Besar.";
+
+/* penyimpanan lokal (aman kalau browser menolak) */
+const store = {
+  get(k,d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d }catch(e){ return d } },
+  set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)) }catch(e){} }
+};
+const saved = new Set(store.get("lapang-saved", []));
+let filter = "semua";
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+const pad = n => String(n).padStart(2, "0");
+const short = d => d.ref.replace("QS ","");
+
+const P = {
+  back:'<path d="M15 18l-6-6 6-6"/>',
+  mark:'<path d="M6 3h12v18l-6-4-6 4z"/>',
+  ext:'<path d="M7 17 17 7M8 7h9v9"/>',
+};
+const icon = (n, size=20, color="currentColor", sw=2.5, fill="none") =>
+  `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${fill}" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]}</svg>`;
+
+/* ---------- HOME ---------- */
+function card(d, span){
+  return `<a class="card lift press${span ? " span2" : ""}" href="#${d.key}" style="background:${d.color}">
+      ${saved.has(d.key) ? `<span class="mk">${icon("mark",16,"var(--ink)",2.5,"var(--ink)")}</span>` : ""}
+      <div class="mood hd">${esc(d.mood)}</div>
+      <div class="meta">${esc(d.title)}<br><span style="white-space:nowrap">${esc(short(d))}</span></div>
+    </a>`;
+}
+const grid = list => list.map((d,i) => card(d, list.length % 2 === 1 && i === list.length - 1)).join("");
+
+function home(){
+  const list = DATA.filter(d => filter === "semua" || d.tags.includes(filter));
+  return `
+    <div class="top"><div class="brand"><div class="logo hd" aria-hidden="true">L</div><span class="hd">Lapang</span></div></div>
+    <section class="quote">
+      <div class="px">PENGINGAT HARI INI</div>
+      <p>“${QUOTE}”</p>
+      <div class="by">— Raim Laode</div>
+    </section>
+    <div class="sec">
+      <h1 class="hd">lagi ngerasa apa?</h1>
+      <p>Pilih yang paling relate, doanya nyusul di dalam.</p>
+      <div class="chips" role="toolbar" aria-label="Filter mood">
+        ${FILTERS.map(([id,l]) => `<button class="chip" data-filter="${id}" aria-pressed="${filter===id}">${l}</button>`).join("")}
+      </div>
+    </div>
+    <div class="grid">${grid(list)}</div>
+    <a class="quest" href="https://almatsurat.net" target="_blank" rel="noopener">
+      <div style="flex:1"><div class="hd">Al-Ma'tsurat pagi &amp; petang</div><small>Dibaca di almatsurat.net</small></div>
+      ${icon("ext",20,"var(--ink)")}
+    </a>
+    <footer>Teks Arab (Rasm Utsmani) dan terjemahan Kementerian Agama RI dari The Noble Qur'an Encyclopedia (quranenc.com) via dataset quran-json. Latin sesuai pedoman transliterasi Kemenag RI (via equran.id).</footer>`;
+}
+
+/* ---------- TERSIMPAN ---------- */
+function savedPage(){
+  const list = DATA.filter(d => saved.has(d.key));
+  return `
+    <div class="top"><div class="brand"><div class="logo hd" aria-hidden="true">L</div><span class="hd">Lapang</span></div></div>
+    <div class="sec"><h1 class="hd">doa tersimpan</h1><p>Yang kamu tandai buat dibaca lagi.</p></div>
+    <div class="grid" style="margin-top:-14px">${list.length ? grid(list) :
+      `<div class="empty">Belum ada yang disimpan.<br>Buka satu doa, terus ketuk ikon penanda di pojok kanan atas.</div>`}</div>`;
+}
+
+/* ---------- HALAMAN DOA ---------- */
+function focusPage(d){
+  const prev = DATA[d.n - 2], next = DATA[d.n];
+  return `
+    <div class="top">
+      <a class="ibtn press" href="#" aria-label="Kembali ke semua mood">${icon("back",20,"var(--ink)",2.8)}</a>
+      <span class="px" style="font-size:9px;color:var(--muted)">${pad(d.n)} / ${pad(DATA.length)}</span>
+      <button class="ibtn press" data-act="save" aria-label="Simpan doa" aria-pressed="${saved.has(d.key)}">${icon("mark",20,"var(--ink)")}</button>
+    </div>
+    <section class="hero" style="background:${d.color}">
+      <div class="px">KAMU PILIH</div>
+      <h1 class="hd">${esc(d.mood)}</h1>
+      <p>${esc(d.intro)}</p>
+    </section>
+    <section class="doa">
+      <div class="head"><span class="hd">${esc(d.title)}</span><span class="ref" style="background:${d.color}">${esc(d.ref)}</span></div>
+      <p class="ar" lang="ar">${d.ar}</p>
+      <p class="lat">${esc(d.latin)}</p>
+      <p class="tr">${esc(d.id)}</p>
+      ${d.fullAr ? `<div class="full" id="full"><div class="px" style="color:var(--muted)">AYAT LENGKAP</div><p class="ar" lang="ar">${d.fullAr}</p><p class="lat">${esc(d.fullLatin)}</p><p class="tr">${esc(d.fullId)}</p></div>` : ""}
+      <div class="acts">
+        <button data-act="copy">Salin</button>
+        ${d.fullAr ? `<button data-act="full" aria-expanded="false">Lihat ayat lengkap</button>` : ""}
+      </div>
+    </section>
+    <div class="lore"><span class="px">LORE</span><p>${esc(d.lore)}</p></div>
+    <div class="pager">
+      ${prev ? `<a class="press" href="#${prev.key}"><div class="px">PREV</div><b>${esc(prev.mood)}</b></a>` : `<a class="press" href="#"><div class="px">PREV</div><b>Semua mood</b></a>`}
+      ${next ? `<a class="next press" href="#${next.key}" style="background:${next.color}"><div class="px" style="color:var(--ink)">NEXT</div><b>${esc(next.mood)}</b></a>` : `<a class="next press" href="#" style="background:var(--lime)"><div class="px" style="color:var(--ink)">NEXT</div><b>Semua mood</b></a>`}
+    </div>`;
+}
+
+/* ---------- ROUTER (#kunci) ---------- */
+function route(){
+  const h = location.hash.slice(1);
+  const d = DATA.find(x => x.key === h);
+  const tab = d ? "" : (h === "tersimpan" ? h : "home");
+  $("#app").innerHTML = d ? focusPage(d) : tab === "tersimpan" ? savedPage() : home();
+  $("#nav").style.display = d ? "none" : "";
+  document.querySelectorAll("#nav a").forEach(a => a.dataset.tab === tab ? a.setAttribute("aria-current","page") : a.removeAttribute("aria-current"));
+  document.title = d ? `${d.mood} — Lapang` : "Lapang — Doa sesuai mood";
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", route);
+
+document.addEventListener("click", async e => {
+  const f = e.target.closest("[data-filter]");
+  if (f) { filter = f.dataset.filter; route(); return; }
+  const a = e.target.closest("[data-act]"); if (!a) return;
+  const d = DATA.find(x => x.key === location.hash.slice(1));
+  switch (a.dataset.act) {
+    case "save":
+      saved.has(d.key) ? saved.delete(d.key) : saved.add(d.key);
+      store.set("lapang-saved", [...saved]);
+      a.setAttribute("aria-pressed", saved.has(d.key));
+      toast(saved.has(d.key) ? "Disimpan" : "Dihapus dari simpanan"); break;
+    case "copy":
+      try { await navigator.clipboard.writeText(`${d.title}\n\n${d.ar}\n\n${d.latin}\n\n${d.id}\n\n${d.ref}`); toast("Tersalin"); }
+      catch(err){ toast("Gagal menyalin"); } break;
+    case "full": {
+      const open = $("#full").classList.toggle("open");
+      a.textContent = open ? "Tutup ayat lengkap" : "Lihat ayat lengkap";
+      a.setAttribute("aria-expanded", open); break;
+    }
+  }
+});
+
+let tt;
+function toast(m){ const t = $("#toast"); t.textContent = m; t.classList.add("show"); clearTimeout(tt); tt = setTimeout(() => t.classList.remove("show"), 1600); }
+route();
+
+/* PWA: aktif kalau dibuka lewat http(s), misalnya GitHub Pages atau npx serve */
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); });
+}
+</script>
+</body>
+</html>

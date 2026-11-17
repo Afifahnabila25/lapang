@@ -1,0 +1,14 @@
+{
+  "name": "lapang",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Lapang — kumpulan doa sesuai mood",
+  "scripts": { "build": "node build.js", "preview": "npx serve dist" },
+  "dependencies": {
+    "quran-json": "^3.1.2",
+    "@fontsource/amiri-quran": "^5.0.0",
+    "@fontsource/bricolage-grotesque": "^5.0.0",
+    "@fontsource/dm-sans": "^5.0.0",
+    "@fontsource/press-start-2p": "^5.0.0"
+  }
+}
